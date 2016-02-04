@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zone Entries Overview</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<style type="text/css">
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis-text {
+    font-family: sans-serif;
+    font-size: 11px;
+    background-color: white;
+    font-weight: bold;
+}
+
+.tick {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+    #tooltip {
+        z-index: 1;
+        position: absolute;
+        /* min-width: 170px;*/
+        width: 250px;
+        height: 85px;
+        padding: 6px;
+        pointer-events: none;
+      }
+      
+  #tooltip.hidden {
+    display: none;
+    }
+      
+  #tooltip p {
+    font-family: sans-serif;
+    font-size: 11px;
+    color: black;
+    text-align: center;
+    }
+
+  #tooltip h1 {
+    font-family: sans-serif;
+    font-size: 14px;
+    color: black;
+    text-align: center;
+  }
+#tooltip img {
+    display:block;
+    margin:auto;
+    width: 22px;
+    height: 22px;
+    border: 3px solid black;
+    background-color: white;
+    border-radius: 50%;
+}
+
+
+
+</style>
+</head>
+<body>
+<h2>Zone Entries Overview</h2>
+<p>This is a data visualization showing team and individual zone entries</p>
+<!--<div>
+<input type="button" id="playerbtn" value="See Player View">
+<input type="button" id="teambtn" value="See Team View">
+</div>
+-->
+<div class="btn-group" data-toggle="buttons">
+  <label class="btn btn-primary active">
+    <input type="radio" name="player" id="teambtn" autocomplete="off" checked> View Team Stats
+  </label>
+  <label class="btn btn-primary">
+    <input type="radio" name="team" id="playerbtn" autocomplete="off"> View Player Stats
+  </label>
+</div>
+
+<div id="data">
+    <div id="player-circles">
+    </div>
+</div>
+
+<div id="tooltip" class="hidden">
+</div>
+
+<script type="text/javascript">
+
+//Width and height
+var margin = {top: 50, right: 20, bottom: 30, left: 40};
+var w = 960 - margin.left - margin.right;
+var h = 500 - margin.top - margin.bottom;
+
+//Create scale functions
+var xScale = d3.scale.linear()
+    .range([0, w]);
+
+var yScale = d3.scale.linear()
+    .range([h, 0]);
+
+// var color = d3.scale.color();
+
+// Define the Axis
+var xAxis = d3.svg.axis()
+    .scale(xScale)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("left");
+
+//Create SVG element
+var svg = d3.select("body")
+            .append("svg")
+            .attr("width", w + margin.left + margin.right)
+            .attr("height", h + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+//Load the TEAM data set
+var teamdata = d3.tsv("team.tsv", function(error, teamdata) {
+  if (error) throw error;
+
+  teamdata.forEach(function(d) {
+    d.entriesper60 = +d.entriesper60;
+    d.carryinpercent = +d.carryinpercent;
+  });
+
+  xScale.domain(d3.extent(teamdata, function(d) { return d.carryinpercent; })).nice();
+  yScale.domain(d3.extent(teamdata, function(d) { return d.entriesper60; })).nice();
+
+//Create X axis
+svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + h + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "axis-text")
+      .attr("x", w)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("Carry-in %");
+
+//Create Y axis
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+  .append("text")
+    .attr("class", "axis-text")
+    .attr("y", -20)
+    .attr("z", 0)
+    .style("text-anchor", "middle")
+    .text("Entries/60")
+
+//Create Carry-in% Avg
+var carryinLine = svg.append("svg:line")
+    .attr("class", "line")
+    .attr("id", "carryLine")
+    .attr("x1", 330)
+    .attr("y1", 0)
+    .attr("x2", 330)
+    .attr("y2", 420)
+    .attr("stroke", "black")
+    .style("stroke-width", 2)
+    .style("stroke-opacity", 0.6)
+
+//Create Carry-in% Title
+svg.append("text")
+    .attr("class", "axis-text")
+    .attr("id", "carryTitle")
+    .attr("x", -91)
+    .attr("y", 326)
+    .text("NHL AVG - 45.8%")
+    .attr("transform", "rotate(-90)");
+
+//Create Entries/60 Avg
+var EntriesLine = svg.append("svg:line")
+    .attr("class", "line")
+    .attr("id", "entryLine")
+    .attr("x1", 0)
+    .attr("y1", 180)
+    .attr("x2", 900)
+    .attr("y2", 180)
+    .attr("stroke", "black")
+    .style("stroke-width", 2)
+    .style("stroke-opacity", 0.6)
+
+//Create Entries/60 Title
+svg.append("text")
+    .attr("class", "axis-text")
+    .attr("id", "entryTitle")
+    .attr("x", 819)
+    .attr("y", 176)
+    .text("NHL AVG - 75.2")
+    .attr("transform", "rotate(0)");
+
+// DEFS & Pattern for images
+svg.append("defs")
+  .selectAll("pattern")
+  .data(teamdata)
+  .enter()
+  .append("pattern")
+  .attr('id', function(d, i) {
+    return d.team;
+  })
+ // .attr('patternUnits', 'userSpaceOnUse')
+  .attr('width', 20)
+  .attr('height', 20)
+  .append("image")
+  .attr("xlink:href", function(d) {
+    return d.url + d.team;
+  })
+  .attr('width', 20)
+  .attr('height', 20)
+  .attr("transform", "translate(2, 2)");
+
+// Create TEAM Circles
+ var teamCircle = svg.selectAll("g.teamcircle")
+  .data(teamdata)
+  .enter()
+  .append("g")
+  .attr("class", "teamcircle");
+/*
+teamCircle.append("circle")
+.attr("fill", "white")
+.attr("r", 12)
+.attr("cx", function(d) { return xScale(d.carryinpercent); })
+.attr("cy", function(d) { return yScale(d.entriesper60); });
+*/
+teamCircle.append("circle")
+  .style("stroke", function(d) { return d.hex; })     
+  .style("stroke-width", 2)
+  .style("stroke-opacity", .8)
+  .attr("r", 12)
+  .attr("cx", function(d) { return xScale(d.carryinpercent); })
+  .attr("cy", function(d) { return yScale(d.entriesper60); })
+  .attr("fill", function(d) { return "url(#" + d.team + ")"})
+  .on("mouseover", mouseover)
+  .on("mouseout", mouseout); 
+
+
+});
+
+
+// CHANGE 
+// TO
+// PLAYER
+// VIEW   
+
+
+
+
+
+//On click, change to PLAYER data            
+d3.select("#playerbtn")
+.on("click", function() {
+//New values for dataset
+var playerdata = d3.tsv("player.tsv", function(error, playerdata) {
+  if (error) throw error;
+
+  playerdata.forEach(function(d) {
+    d.entriesper60 = +d.entriesper60;
+    d.carryinpercent = +d.carryinpercent;
+  });
+
+//Update scale domains
+  xScale.domain(d3.extent(playerdata, function(d) { return d.carryinpercent; })).nice();
+  yScale.domain(d3.extent(playerdata, function(d) { return d.entriesper60; })).nice();
+
+//Create Carrin % Avg
+svg.selectAll("#carryLine")
+  .transition()
+  .duration(500) 
+  .attr("x1", 460)
+  .attr("y1", 0)
+  .attr("x2", 460)
+  .attr("y2", 420);
+
+//Create Carryin % Title
+svg.selectAll("#carryTitle")
+  .transition()
+  .duration(500)
+  .attr("x", -91)
+  .attr("y", 456);
+
+//Create Entries/60 Avg
+svg.selectAll("#entryLine")
+  .transition()
+  .duration(500)
+  .attr("x1", 0)
+  .attr("y1", 225)
+  .attr("x2", 900)
+  .attr("y2", 225)
+
+//Create Entries/60 Title
+svg.selectAll("#entryTitle")
+  .transition()
+  .duration(500)
+  .attr("x", 796)
+  .attr("y", 221)
+  .text("PLAYER AVG - 15.2");
+
+var circles = svg.selectAll("circle")
+  .data(playerdata);
+  
+circles.enter()
+  .append("circle") 
+  .attr("cx", function(d) { return xScale(d.carryinpercent); })
+  .attr("cy", function(d) { return yScale(d.entriesper60); })
+  .attr("r", 6)
+  .attr("class", "player.circle")
+  .style("opacity", .5)
+  .attr("fill", function(d) { return d.hex; })
+  .on("mouseover", mouseover)
+    .on("mouseout", mouseout);
+
+circles.transition()
+  .duration(500)
+  .attr("cx", function(d) { return xScale(d.carryinpercent); })
+  .attr("cy", function(d) { return yScale(d.entriesper60); })
+  .attr("r", 6)
+  .attr("class","chart")
+  .style("stroke-opacity", 0)
+  .style("opacity", .5)
+  .attr("fill", function(d) { return d.hex; });
+
+  // Update X Axis
+svg.select(".x.axis")
+    .transition()
+    .duration(500)
+    .call(xAxis);
+
+// Update Y Axis
+svg.select(".y.axis")
+    .transition()
+    .duration(500)
+    .call(yAxis); 
+});  
+});
+
+
+// CHANGE
+// BACK
+// TO
+// TEAM
+// VIEW
+
+
+
+
+
+
+
+
+//On click, change to TEAM data            
+d3.select("#teambtn")
+.on("click", function() {
+//New values for dataset
+var teamdata = d3.tsv("team.tsv", function(error, teamdata) {
+  if (error) throw error;
+
+  teamdata.forEach(function(d) {
+    d.entriesper60 = +d.entriesper60;
+    d.carryinpercent = +d.carryinpercent;
+  });
+
+//Update scale domains
+  xScale.domain(d3.extent(teamdata, function(d) { return d.carryinpercent; })).nice();
+  yScale.domain(d3.extent(teamdata, function(d) { return d.entriesper60; })).nice();
+
+//Create Carrin % Avg
+svg.selectAll("#carryLine")
+  .transition()
+  .duration(500) 
+  .attr("x1", 330)
+  .attr("y1", 0)
+  .attr("x2", 330)
+  .attr("y2", 420);
+
+//Create Carryin % Title
+svg.selectAll("#carryTitle")
+  .transition()
+  .duration(500)
+  .attr("x", -91)
+  .attr("y", 326);
+
+//Create Entries/60 Avg
+svg.selectAll("#entryLine")
+  .transition()
+  .duration(500)
+  .attr("x1", 0)
+  .attr("y1", 180)
+  .attr("x2", 900)
+  .attr("y2", 180)
+
+//Create Entries/60 Title
+svg.selectAll("#entryTitle")
+  .transition()
+  .duration(500)
+  .attr("x", 819)
+  .attr("y", 176)
+  .text("NHL AVG - 75.2");
+
+
+
+var circles = svg.selectAll("circle")
+  .data(teamdata);
+
+circles.exit().remove();
+  
+svg.selectAll("circle")
+    .data(teamdata)
+circles.enter()
+  .append("circle") 
+  .style("stroke", function(d) { return d.hex; })     
+  .style("stroke-width", 2)
+  .style("stroke-opacity", .8)
+  .style("opacity", 1)
+  .attr("r", 12)
+  .attr("cx", function(d) { return xScale(d.carryinpercent); })
+  .attr("cy", function(d) { return yScale(d.entriesper60); })
+  .attr("fill", function(d) { return "url(#" + d.team + ")"})
+  .on("mouseover", mouseover)
+    .on("mouseout", mouseout);
+
+circles.transition()
+  .style("stroke", function(d) { return d.hex; })     
+  .style("stroke-width", 2)
+  .style("stroke-opacity", .8)
+  .style("opacity", 1)
+  .attr("r", 12)
+  .attr("cx", function(d) { return xScale(d.carryinpercent); })
+  .attr("cy", function(d) { return yScale(d.entriesper60); })
+  .attr("fill", function(d) { return "url(#" + d.team + ")"});
+
+  // Update X Axis
+svg.select(".x.axis")
+    .transition()
+    .duration(500)
+    .call(xAxis);
+
+// Update Y Axis
+svg.select(".y.axis")
+    .transition()
+    .duration(500)
+    .call(yAxis);
+});
+});
+
+  // Update X Axis
+svg.select(".x.axis")
+    .transition()
+    .duration(500)
+    .call(xAxis);
+
+// Update Y Axis
+svg.select(".y.axis")
+    .transition()
+    .duration(500)
+    .call(yAxis); 
+
+
+
+function mouseover(d) {
+   var xPosition = parseFloat(d3.select(this).attr("cx")) - 83;
+  var yPosition = parseFloat(d3.select(this).attr("cy")) + 117;
+
+  d3.select("#tooltip")
+      .style("left", xPosition + "px")
+    .style("top", yPosition + "px")
+    .html("<H1><strong><span id='name'>name</span></strong></H1><img src='" + d.image + "&width=22&height=22" + "'/></div><p>Carry-in% - <span id='carryin'>100</span></br>Entries/60 - <span id='entries'>100.0</span></p>")
+
+  //Update the tooltip position and value
+  d3.select("#tooltip")
+    .select("#name")
+    .text(d.name);
+
+  d3.select("#tooltip")
+    .select("#carryin")
+    .text(d.carryinpercent);
+
+  d3.select("#tooltip")
+    .select("#entries")
+    .text(d.entriesper60);
+
+  //Show the tooltip
+  d3.select("#tooltip").classed("hidden", false);   //quickly apply or remove classes from an element
+};
+
+function mouseout(d) {
+    //Hide the tooltip
+  d3.select("#tooltip").classed("hidden", true);  //quickly apply or remove classes from an element
+}
+
+</script>
+</body>
+</html>

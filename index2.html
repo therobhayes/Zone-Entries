@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>D3 Demo: 5-div bar chart</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+
+<style type="text/css">
+
+
+
+</style>
+</head>
+<body>
+
+<div class="teamcircles"></div>
+
+<script type="text/javascript">
+
+//Width and height
+var margin = {top: 20, right: 20, bottom: 30, left: 40};
+var w = 960 - margin.left - margin.right;
+var h = 500 - margin.top - margin.bottom;
+
+//Create scale functions
+var xScale = d3.scale.linear()
+    .range([0, w]);
+
+var yScale = d3.scale.linear()
+    .range([h, 0]);
+
+// Define the Axis
+var xAxis = d3.svg.axis()
+    .scale(xScale)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("left");
+
+//Create SVG element
+var svg = d3.select("body")
+            .append("svg")
+            .attr("width", w + margin.left + margin.right)
+            .attr("height", h + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+//Load the TEAM data set
+var teamdata = d3.tsv("team.tsv", function(error, teamdata) {
+	if (error) throw error;
+
+	teamdata.forEach(function(d) {
+	d.entriesper60 = +d.entriesper60;
+	d.carryinpercent = +d.carryinpercent;
+	});
+
+  xScale.domain(d3.extent(teamdata, function(d) { return d.carryinpercent; })).nice();
+  yScale.domain(d3.extent(teamdata, function(d) { return d.entriesper60; })).nice();
+
+//Create X axis
+svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + h + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", w)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("Carry-in %");
+
+//Create Y axis
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+  .append("text")
+    .attr("class", "label")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .text("Entries/60")
+
+var circle = d3.selectAll(".teamcircles")
+	.data(teamdata)
+	.enter()
+	.append("circle")
+	.attr("class", "circle")
+	.attr("stroke", function(d) { return d.hex; })     
+  	.style("stroke-width", 2)
+  	.attr("cx", function(d) { return xScale(d.carryinpercent); })
+  	.attr("cy", function(d) { return yScale(d.entriesper60); })
+  	.style("fill", "black");
+  	});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,811 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>For Yankees, Little Bang for Their Buck - Interactive Graphic - NYTimes.com</title>
+<script type="text/javascript" src="http://graphics8.nytimes.com/js/common.js"></script>
+<script type="text/javascript" src="http://graphics8.nytimes.com/js/util/tooltip.js"></script>
+<script type="text/javascript" src="http://graphics8.nytimes.com/js/common/sharetools/2.0/shareTools.js"></script>
+<script type="text/javascript" src="http://graphics8.nytimes.com/js/app/save/crossPlatformSave.js"></script>
+    <style>
+   
+<div id="interactiveFreeFormMain">
+<style type="text/css">
+
+#interactiveFooter {
+  border-top: 1px solid #ddd;
+  margin-top: 10px;
+  padding-top: 12px;
+}
+
+.storyHeader h1,
+.storySummary {
+  margin: auto;
+  padding: 0;
+  position: relative;
+  width: 720px;
+}
+
+.storyHeader h1 {
+  font-size: 32px !important;
+  margin: 1em auto 1em auto;
+  text-align: center;
+}
+
+.storySummary .summary {
+  font-size: 15px !important;
+  line-height: 22px !important;
+}
+
+.storySummary .summary:before {
+  content: "By MIKE BOSTOCK and JOE WARD";
+  display: block;
+  position: absolute;
+  font: 12px sans-serif;
+  top: -28px;
+  width: 720px;
+  text-align: center;
+}
+
+.g-fallback {
+  position: relative;
+  width: 970px;
+  height: 630px;
+}
+
+.g-fallback-note {
+  position: absolute;
+  font: 12px sans-serif;
+  width: 180px;
+}
+
+</style>
+<!--[if gt IE 8]><!-->
+<style>
+
+@import url(//typeface.nytimes.com/k/zqr1vxl-d.css);
+
+.storyHeader h1 {
+  font-family: "nyt-cheltenham", sans-serif;
+  font-weight: 300;
+}
+
+#g-graphic {
+  font: 11px sans-serif;
+}
+
+.g-chart {
+  position: relative;
+}
+
+.g-axis path {
+  display: none;
+}
+
+.g-axis line {
+  fill: none;
+  stroke: #ddd;
+  shape-rendering: crispEdges;
+}
+
+.g-axis,
+.g-league-mean-value {
+  font-size: 12px;
+}
+
+.g-axis .g-label {
+  font-weight: bold;
+}
+
+.g-underlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.g-league-mean-value {
+  font-weight: bold;
+}
+
+.g-league-mean-title {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.g-league-mean line {
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.g-league-mean rect {
+  fill: #fff;
+}
+
+.g-player-dots circle {
+  fill-opacity: .5;
+}
+
+.g-imagery {
+  position: absolute;
+}
+
+.g-player-image {
+  position: absolute;
+}
+
+.g-player-image-sphere,
+.g-team-image-sphere {
+  background-size: 216px 96px;
+  height: 24px;
+  left: -12px;
+  position: absolute;
+  top: -12px;
+  width: 24px;
+}
+
+.g-player-image-label,
+.g-team-image-label {
+  color: #777;
+  text-align: center;
+  text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 #fff, -1px 0 #fff;
+  position: absolute;
+  text-align: center;
+  width: 120px;
+  left: -60px;
+  top: -25px;
+}
+
+.g-team-image-label,
+.g-team-selected .g-player-image-label {
+  color: #000;
+}
+
+.g-team-selected .g-team-image-label {
+  font-weight: bold;
+}
+
+.g-team-image-value,
+.g-player-image-value {
+  color: #777;
+  font-weight: normal;
+  line-height: 1.1em;
+  position: absolute;
+  top: 38px;
+  white-space: pre;
+  width: 120px;
+}
+
+.g-team-image:not(.g-team-hovered) .g-team-image-value,
+.g-player-image:not(.g-player-hovered) .g-player-image-value,
+.g-player-image:not(.g-team-selected):not(.g-player-hovered) {
+  display: none;
+}
+
+.g-voronoi {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.g-voronoi path {
+  fill: none;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.g-buttons {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.g-view-button {
+  width: 170px;
+}
+
+.g-button {
+  background: #fff;
+  border: solid 1px #ddd;
+  border-bottom-color: #ccc;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  color: #888;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  line-height: 18px;
+  margin: 0 -1px 0 0;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+.g-button:hover {
+  border-color: #ccc;
+  border-bottom-color: #bbb;
+  box-shadow: 0 1px 2px rgba(0,0,0,.15);
+  color: #666;
+}
+
+.g-button.g-button-active,
+.g-button:active {
+  background: #f0f0f0;
+  border-color: #ccc;
+  border-top-color: #bbb;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+  color: #222;
+  font-weight: 600;
+}
+
+.g-buttons .g-button {
+  border-radius: 0;
+  margin-left: -5px;
+  padding: 8px;
+}
+
+.g-buttons .g-button:first-child {
+  border-radius: 5px 0 0 5px;
+  margin-left: 0;
+}
+
+.g-buttons .g-button:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+.g-buttons .g-button:focus {
+  z-index: 3;
+}
+
+.g-buttons .g-button.g-button-active {
+  z-index: 2;
+}
+
+.g-notes {
+  margin: 30px 0;
+  height: 190px;
+}
+
+.g-note {
+  display: inline-block;
+  float: left;
+  font-size: 12px;
+  line-height: 1.4em;
+  width: 207px;
+  margin-left: 28px;
+}
+
+.g-note-title {
+  font-weight: bold;
+}
+
+.g-note-body {
+  color: #777;
+  height: 110px;
+}
+
+.g-note .g-button {
+  position: relative;
+  height: 32px;
+  margin: 20px;
+  width: 170px;
+}
+
+.g-note .g-button div {
+  background-size: 216px 96px;
+  height: 24px;
+  left: 4px;
+  position: absolute;
+  top: 3px;
+  width: 24px;
+}
+
+</style>
+<div id="g-graphic">
+<div class="g-buttons">
+<button class="g-view-button g-button g-button-active" tabindex="1" data-view="team">Team Averages</button>
+<button class="g-view-button g-button" tabindex="1" data-view="player">Top 10 Hitters Per Team</button>
+</div>
+<div class="g-chart">
+<svg class="g-background"></svg>
+<div class="g-imagery"></div>
+<svg class="g-voronoi"></svg>
+</div>
+<div class="g-notes">
+<div class="g-note">
+<div class="g-note-title">New York Yankees</div>
+<div class="g-note-body">The Yankees&rsquo; 10 highest-paid hitters are making nearly $150 million this season, but only the Marlins have fewer hits. Five Yankees make up nearly 20 percent of the players with above-average salary and below-average number of hits.</div>
+<button class="g-button" data-team="Yankees">Show Yankees</button>
+</div>
+<div class="g-note">
+<div class="g-note-title">Los Angeles Dodgers</div>
+<div class="g-note-body">The Dodgers&rsquo; hitters are second only to the Yankees in salary, but unlike the Yankees, the Dodgers have hit well enough to put them atop the National League West.</div>
+<button class="g-button" data-team="Dodgers">Show Dodgers</button>
+</div>
+<div class="g-note">
+<div class="g-note-title">Houston Astros</div>
+<div class="g-note-body">Eight of the highest-paid Astros make only slightly more than the $490,000 league minimum. The 10 highest-paid Yankees hitters earn 20 times more than their Houston counterparts.</div>
+<button class="g-button" data-team="Astros">Show Astros</button>
+</div>
+<div class="g-note">
+<div class="g-note-title">Los Angeles Angels</div>
+<div class="g-note-body">With 137 hits, Mike Trout is a relative bargain at $510,000 this season. His teammate Albert Pujols is making $16 million but might miss the rest of the season with a foot injury.</div>
+<button class="g-button" data-team="Angels">Show Angels</button>
+</div>
+</div>
+<br clear="all">
+</div>
+<script src="http://graphics8.nytimes.com/newsgraphics/2013/07/31/baseball-value/3b4a542290210cdf3c7bef61b1e7881124c4a572/lib.js"></script>
+<script>(function() {
+
+var margin = {top: 30, right: 65, bottom: 45, left: 65},
+    width = 970 - margin.left - margin.right,
+    height = 620 - margin.top - margin.bottom,
+    tickSize = 11,
+    tickPadding = 3;
+
+var formatSalary = d3.format("$.3s"),
+    formatHits = d3.format(".0f");
+
+var x = d3.scale.linear()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var z = d3.scale.ordinal()
+    .domain(["Angels","Astros","Athletics","Blue Jays","Braves","Brewers","Cardinals","Cubs","Diamondbacks","Dodgers","Giants","Indians","Mariners","Marlins","Mets","Nationals","Orioles","Padres","Phillies","Pirates","Rangers","Rays","Reds","Red Sox","Rockies","Royals","Tigers","Twins","White Sox","Yankees"])
+    .range(["#9a1132","#0f316a","#0a370f","#8f908e","#052759","#060c4e","#961335","#002257","#8c0e27","#003876","#2d201a","#05134a","#03104b","#8f908e","#02255d","#041152","#000000","#040e50","#900e30","#2d201a","#032151","#05124a","#b91a40","#060f49","#070b10","#032152","#05134b","#05134b","#050505","#071443"]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+    .tickFormat(function(d) { return "$" + Math.round(d / 1e6) + "M"; })
+    .tickSize(-height - tickSize);
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(6)
+    .tickSize(-width - tickSize);
+
+var voronoi = d3.geom.voronoi()
+    .x(function(d) { return x(d.salary) + Math.random() - .5; })
+    .y(function(d) { return y(d.hits) + Math.random() - .5; })
+    .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]]);
+
+var chart = d3.select(".g-chart");
+
+// Axes, background dots.
+var svgBackground = chart.select(".g-background")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Images and labels (because svg:image doesn’t cache!).
+var imagery = chart.select(".g-imagery")
+    .style("left", margin.left + "px")
+    .style("top", margin.top + "px");
+
+// Voronoi.
+var svgVoronoi = chart.select(".g-voronoi")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.tsv("http://graphics8.nytimes.com/newsgraphics/2013/07/31/baseball-value/3b4a542290210cdf3c7bef61b1e7881124c4a572/players.tsv", type, function(error, players) {
+  var teams = d3.nest()
+      .key(function(d) { return d.team; })
+      .entries(players);
+
+  var selectedTeam = teams.filter(function(d) { return d.key === "Yankees"; })[0],
+      selectedView = "team";
+
+  players.forEach(function(player, i) {
+    player.type = "player";
+    player.id = i;
+  });
+
+  teams.forEach(function(team, i) {
+    team.type = "team";
+    team.id = team.key.replace(/\s+/g, "").toLowerCase();
+    team.salary = d3.mean(team.values, function(d) { return d.salary; });
+    team.hits = d3.mean(team.values, function(d) { return d.hits; });
+    team.values.forEach(function(d) { d.team = team; });
+  });
+
+  // compute spritesheet index
+  teams.sort(function(a, b) { return d3.ascending(a.id, b.id); }).forEach(function(team, i) {
+    team.spherei = i % 9;
+    team.spherej = (i / 9) | 0;
+  });
+
+  // minimize label occlusion since labels are on top
+  players.sort(function(a, b) { return b.hits - a.hits; });
+  teams.sort(function(a, b) { return b.hits - a.hits; });
+
+  var teamButton = d3.selectAll(".g-note .g-button")
+      .data(teams, function(d) { return d ? d.key : this.getAttribute("data-team"); })
+      .on("click", clickTeamButton);
+
+  teamButton.append("div")
+      .style("background-image", "url(http://graphics8.nytimes.com/newsgraphics/2013/07/31/baseball-value/3b4a542290210cdf3c7bef61b1e7881124c4a572/spheres-" + (window.devicePixelRatio > 1 ? 2 : 1) + ".png)")
+      .style("background-position", function(d) { return -24 * d.spherei + "px " + -24 * d.spherej + "px"; });
+
+  // hmm, this is awkward…
+  x.domain(d3.extent(players, function(d) { return d.salary; })).nice(10);
+  y.domain(d3.extent(players, function(d) { return d.hits; })).nice(10);
+
+  svgBackground.append("defs").selectAll("clipPath")
+      .data(players)
+    .enter().append("clipPath")
+      .attr("id", function(d) { return "g-clip-" + d.type + "-" + d.id; })
+    .append("circle")
+      .attr("r", 40)
+      .attr("cx", function(d) { return x(d.salary); })
+      .attr("cy", function(d) { return y(d.hits); });
+
+  x.domain(d3.extent(teams, function(d) { return d.salary; })).nice(10);
+  y.domain(d3.extent(teams, function(d) { return d.hits; })).nice(10);
+
+  svgBackground.append("defs").selectAll("clipPath")
+      .data(teams)
+    .enter().append("clipPath")
+      .attr("id", function(d) { return "g-clip-" + d.type + "-" + d.id; })
+    .append("circle")
+      .attr("r", 40)
+      .attr("cx", function(d) { return x(d.salary); })
+      .attr("cy", function(d) { return y(d.hits); });
+
+  var gX = svgBackground.append("g")
+      .attr("class", "g-x g-axis")
+      .attr("transform", "translate(0," + (height + tickSize) + ")")
+      .call(xAxis);
+
+  gX.append("text")
+      .attr("class", "g-label")
+      .attr("x", width)
+      .attr("y", 3)
+      .attr("dy", "2.06em")
+      .style("text-anchor", "end")
+      .text("2013 Salary");
+
+  var gY = svgBackground.append("g")
+      .attr("class", "g-y g-axis")
+      .attr("transform", "translate(" + -tickSize + ",0)")
+      .call(yAxis);
+
+  gY.append("text")
+      .attr("class", "g-label")
+      .attr("dy", "-1em")
+      .attr("x", tickSize)
+      .text("2013 Hits");
+
+  var meanSalary = svgBackground.append("g")
+      .datum(d3.mean(players, function(d) { return d.salary; }))
+      .attr("class", "g-league-mean g-league-mean-salary")
+      .attr("transform", function(d) { return "translate(" + x(d) + ",0)"; });
+
+  meanSalary.append("line")
+      .attr("y2", height + tickSize);
+
+  meanSalary.append("text")
+      .attr("class", "g-league-mean-value")
+      .attr("dy", ".71em")
+      .attr("y", height + tickSize + tickPadding)
+      .style("text-anchor", "middle")
+      .text(formatSalary);
+
+  var meanSalaryTitle = meanSalary.append("text")
+      .attr("class", "g-league-mean-title")
+      .attr("transform", "rotate(-90)")
+      .attr("dy", ".35em")
+      .attr("x", -height + 10)
+      .text("League Avg.");
+
+  meanSalary.insert("rect", "text")
+      .attr("y", height - meanSalaryTitle.node().getComputedTextLength() - 15)
+      .attr("x", -10)
+      .attr("width", 20)
+      .attr("height", meanSalaryTitle.node().getComputedTextLength() + 10);
+
+  var meanHits = svgBackground.append("g")
+      .datum(d3.mean(players, function(d) { return d.hits; }))
+      .attr("class", "g-league-mean g-league-mean-hits")
+      .attr("transform", function(d) { return "translate(0," + y(d) + ")"; });
+
+  meanHits.append("line")
+      .attr("x1", -tickSize)
+      .attr("x2", width);
+
+  meanHits.append("text")
+      .attr("class", "g-league-mean-value")
+      .attr("dy", ".35em")
+      .attr("x", -tickSize - tickPadding)
+      .style("text-anchor", "end")
+      .text(formatHits);
+
+  var meanHitsTitle = meanHits.append("text")
+      .attr("class", "g-league-mean-title")
+      .attr("dy", ".35em")
+      .attr("x", 10)
+      .text("League Avg.");
+
+  meanHits.insert("rect", "text")
+      .attr("y", -10)
+      .attr("x", 5)
+      .attr("height", 20)
+      .attr("width", meanHitsTitle.node().getComputedTextLength() + 10);
+
+  svgBackground.append("g")
+      .attr("class", "g-player-dots")
+      .style("display", "none")
+    .selectAll("circle")
+      .data(players)
+    .enter().append("circle")
+      .attr("class", "g-player-dot")
+      .style("fill", function(d) { return z(d.team.key); })
+      .attr("cx", function(d) { return x(d.team.salary); })
+      .attr("cy", function(d) { return y(d.team.hits); })
+      .attr("r", 2.5);
+
+  var playerImage = imagery.append("div")
+      .attr("class", "g-player-images")
+      .style("display", "none")
+    .selectAll("div")
+      .data(players)
+    .enter().append("div")
+      .attr("class", "g-player-image")
+      .classed("g-team-selected", function(d) { return selectedTeam === d.team; })
+      .style("left", function(d) { return x(d.team.salary) + "px"; })
+      .style("top", function(d) { return y(d.team.hits) + "px"; });
+
+  playerImage.append("div")
+      .attr("class", "g-player-image-sphere")
+      .style("background-image", "url(http://graphics8.nytimes.com/newsgraphics/2013/07/31/baseball-value/3b4a542290210cdf3c7bef61b1e7881124c4a572/spheres-" + (window.devicePixelRatio > 1 ? 2 : 1) + ".png)")
+      .style("background-position", function(d) { return -24 * d.team.spherei + "px " + -24 * d.team.spherej + "px"; });
+
+  playerImage.append("div")
+      .attr("class", "g-player-image-label")
+      .style("opacity", 0)
+      .text(function(d) { return d.name; })
+    .append("div")
+      .attr("class", "g-player-image-value")
+      .text(function(d) { return formatHits(d.hits) + " hits\n" + formatSalary(d.salary); });
+
+  var teamImage = imagery.append("div")
+      .attr("class", "g-team-images")
+    .selectAll("div")
+      .data(teams)
+    .enter().append("div")
+      .attr("class", "g-team-image")
+      .classed("g-team-selected", function(d) { return selectedTeam === d; })
+      .style("position", "absolute")
+      .style("left", function(d) { return x(d.salary) + "px"; })
+      .style("top", function(d) { return y(d.hits) + "px"; });
+
+  teamImage.append("div")
+      .attr("class", "g-team-image-sphere")
+      .style("background-image", "url(http://graphics8.nytimes.com/newsgraphics/2013/07/31/baseball-value/3b4a542290210cdf3c7bef61b1e7881124c4a572/spheres-" + (window.devicePixelRatio > 1 ? 2 : 1) + ".png)")
+      .style("background-position", function(d) { return -24 * d.spherei + "px " + -24 * d.spherej + "px"; });
+
+  teamImage.append("div")
+      .attr("class", "g-team-image-label")
+      .text(function(d) { return d.key; })
+    .append("div")
+      .attr("class", "g-team-image-value")
+      .text(function(d) { return formatHits(d.hits) + " hits\n" + formatSalary(d.salary); });
+
+  svgVoronoi.append("rect")
+      .attr("class", "g-underlay")
+      .attr("width", width)
+      .attr("height", height)
+      .on("click", clickBackground);
+
+  var voronoiCell = svgVoronoi.selectAll("path")
+      .data(voronoi(teams))
+    .enter().append("path")
+      .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
+      .datum(function(d) { return d.point; })
+      .attr("clip-path", function(d) { return "url(#g-clip-team-" + d.id + ")"; })
+      .on("mouseover", mouseoverTeam)
+      .on("mouseout", mouseoutTeam)
+      .on("click", clickTeam);
+
+  var button = d3.selectAll(".g-view-button")
+      .datum(function() { return this.getAttribute("data-view"); })
+      .on("click", clickView);
+
+  function mouseoverTeam(t) {
+    teamImage.filter(function(d) { return d === t; })
+        .classed("g-team-hovered", true)
+        .each(function() { this._next = this.nextSibling; this.parentNode.appendChild(this); });
+  }
+
+  function mouseoutTeam(t) {
+    teamImage.filter(function(d) { return d === t; })
+        .classed("g-team-hovered", false)
+        .each(function() { this.parentNode.insertBefore(this, this._next); });
+  }
+
+  function mouseoverPlayer(p) {
+    playerImage.filter(function(d) { return d === p; })
+        .classed("g-player-hovered", true)
+        .each(function() { this._next = this.nextSibling; this.parentNode.appendChild(this); });
+  }
+
+  function mouseoutPlayer(p) {
+    playerImage.filter(function(d) { return d === p; })
+        .classed("g-player-hovered", false)
+        .each(function() { this.parentNode.insertBefore(this, this._next); });
+  }
+
+  function clickBackground() {
+    if (selectedView === "player") {
+      selectedView = "team";
+      button.classed("g-button-active", function(d) { return d === selectedView; });
+      viewTeam(d3.event.altKey ? 7500 : 750);
+    }
+  }
+
+  function clickPlayer(p) {
+    clickTeam(p.team);
+  }
+
+  function clickTeamButton(d) {
+    if (selectedTeam === d && selectedView === "player") return void clickView("team");
+    clickTeam(d);
+  }
+
+  function clickTeam(d) {
+    if (selectedTeam === d && selectedView === "player") return;
+    selectedTeam = d;
+    teamImage.classed("g-team-selected", function(d) { return d === selectedTeam; });
+    playerImage.classed("g-team-selected", function(d) { return d.team === selectedTeam; });
+    d3.selectAll(".g-team-selected").each(function() { this.parentNode.appendChild(this); });
+
+    if (selectedView === "team") {
+      selectedView = "player";
+      button.classed("g-button-active", function(d) { return d === selectedView; });
+      viewPlayer(d3.event.altKey ? 7500 : 750);
+    }
+
+    teamButton.classed("g-button-active", function(d) { return d === selectedTeam; });
+  }
+
+  function clickView(v) {
+    if (selectedView === v) v = v === "team" ? "player" : "team";
+    teamImage.classed("g-team-hovered", false);
+    playerImage.classed("g-player-hovered", false);
+    button.classed("g-button-active", function(d) { return d === v; });
+    ((selectedView = v) === "team" ? viewTeam : viewPlayer)(d3.event.altKey ? 7500 : 750);
+  }
+
+  function viewTeam(duration) {
+    x.domain(d3.extent(teams, function(d) { return d.salary; })).nice(10);
+    y.domain(d3.extent(teams, function(d) { return d.hits; })).nice(10);
+
+    svgVoronoi.style("display", "none");
+    teamButton.classed("g-button-active", false);
+
+    voronoiCell = voronoiCell.data(voronoi(teams));
+    voronoiCell.exit().remove();
+    voronoiCell.enter().append("path");
+
+    voronoiCell
+        .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
+        .datum(function(d) { return d.point; })
+        .attr("clip-path", function(d) { return "url(#g-clip-team-" + d.id + ")"; })
+        .on("mouseover", mouseoverTeam)
+        .on("mouseout", mouseoutTeam)
+        .on("click", clickTeam);
+
+    var transition = d3.transition()
+        .each("end", function() { svgVoronoi.style("display", null); })
+        .duration(duration);
+
+    transition.select(".g-x.g-axis")
+        .call(xAxis);
+
+    transition.select(".g-y.g-axis")
+        .call(yAxis);
+
+    transition.select(".g-league-mean-salary")
+        .attr("transform", function(d) { return "translate(" + x(d) + ",0)"; });
+
+    transition.select(".g-league-mean-hits")
+        .attr("transform", function(d) { return "translate(0," + y(d) + ")"; });
+
+    transition.select(".g-player-dots")
+        .each("start", function() { d3.select(this).style("display", null); })
+      .selectAll(".g-player-dot")
+        .attr("cx", function(d) { return x(d.team.salary); })
+        .attr("cy", function(d) { return y(d.team.hits); });
+
+    transition.select(".g-player-images")
+        .each("end", function(d) { d3.select(this).style("display", "none"); })
+      .selectAll(".g-player-image")
+        .duration(function(d) { return d.team === selectedTeam ? duration : 0; }) // optimize invisible nodes
+        .style("left", function(d) { return x(d.team.salary) + "px"; })
+        .style("top", function(d) { return y(d.team.hits) + "px"; })
+      .select(".g-player-image-label")
+        .style("opacity", 0);
+
+    transition.select(".g-team-images")
+        .each("start", function(d) { d3.select(this).style("display", null); })
+        .style("opacity", 1)
+      .selectAll(".g-team-image")
+        .style("left", function(d) { return x(d.salary) + "px"; })
+        .style("top", function(d) { return y(d.hits) + "px"; });
+  }
+
+  function viewPlayer(duration) {
+    x.domain(d3.extent(players, function(d) { return d.salary; })).nice(10);
+    y.domain(d3.extent(players, function(d) { return d.hits; })).nice(10);
+
+    svgVoronoi.style("display", "none");
+
+    voronoiCell = voronoiCell.data(voronoi(players));
+    voronoiCell.exit().remove();
+    voronoiCell.enter().append("path");
+
+    voronoiCell
+        .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
+        .datum(function(d) { return d.point; })
+        .attr("clip-path", function(d) { return "url(#g-clip-player-" + d.id + ")"; })
+        .on("mouseover", mouseoverPlayer)
+        .on("mouseout", mouseoutPlayer)
+        .on("click", clickPlayer);
+
+    var transition = d3.transition()
+        .each("end", function() { svgVoronoi.style("display", null); })
+        .duration(duration);
+
+    transition.select(".g-x.g-axis")
+        .call(xAxis)
+      .selectAll(".tick text")
+      .filter(function(d) { return d === 5e6; })
+        .text("");
+
+    transition.select(".g-y.g-axis")
+        .call(yAxis);
+
+    transition.select(".g-league-mean-salary")
+        .attr("transform", function(d) { return "translate(" + x(d) + ",0)"; });
+
+    transition.select(".g-league-mean-hits")
+        .attr("transform", function(d) { return "translate(0," + y(d) + ")"; });
+
+    transition.select(".g-player-dots")
+        .each("start", function() { d3.select(this).style("display", null); })
+      .selectAll(".g-player-dot")
+        .attr("cx", function(d) { return x(d.salary); })
+        .attr("cy", function(d) { return y(d.hits); });
+
+    transition.select(".g-player-images")
+        .each("start", function(d) { d3.select(this).style("display", null); })
+      .selectAll(".g-player-image")
+        .duration(function(d) { return d.team === selectedTeam ? duration : 0; }) // optimize invisible nodes
+        .style("left", function(d) { return x(d.salary) + "px"; })
+        .style("top", function(d) { return y(d.hits) + "px"; })
+      .select(".g-player-image-label")
+        .style("opacity", 1);
+
+    transition.select(".g-team-images")
+        .each("end", function(d) { d3.select(this).style("display", "none"); })
+        .style("opacity", 0)
+      .selectAll(".g-team-image")
+        .style("left", function(d) { return x(d.salary) + "px"; })
+        .style("top", function(d) { return y(d.hits) + "px"; });
+  }
+});
+
+function type(d) {
+  d.hits = +d.hits;
+  d.salary = +d.salary;
+  return d;
+}
+
+})()</script>   
+</body>
+</html>
+
+
